@@ -15,5 +15,12 @@ namespace UnitTest
             var nbt2 = Converter.ReadJavaFile("Resources/level2.dat");
             Assert.IsNotNull(nbt);
         }
+
+        [TestMethod]
+        public void ReadData()
+        {
+            var nbt = Converter.ReadJavaFile("Resources/level.dat");
+            Assert.AreEqual(nbt.Data.GetByte("Data.allowCommands"), 1);
+        }
     }
 }

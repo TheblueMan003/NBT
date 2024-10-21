@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace TheblueMan003.NBT.Tags
 {
+    /// <summary>
+    /// Represents the types of tags in NBT format.
+    /// </summary>
     public enum TagType
     {
         End = 0,
