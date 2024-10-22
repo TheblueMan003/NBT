@@ -11,14 +11,14 @@ namespace TheblueMan003.NBT.Tags
         /// <summary>
         /// Gets or sets the value of the ByteTag.
         /// </summary>
-        public byte Value { get; set; }
+        public sbyte Value { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ByteTag"/> class with the specified name and value.
         /// </summary>
         /// <param name="name">The name of the tag.</param>
         /// <param name="value">The value of the tag.</param>
-        public ByteTag(string name, byte value) : base(name, TagType.Byte)
+        public ByteTag(string name, sbyte value) : base(name, TagType.Byte)
         {
             Value = value;
         }
@@ -39,7 +39,7 @@ namespace TheblueMan003.NBT.Tags
         /// <param name="context">The binary utils context to use for writing.</param>
         public override void Write(Stream data, BinaryUtilsContext context)
         {
-            BinaryUtils.WriteByte(data, Value, context);
+            BinaryUtils.WriteByte(data, (byte)Value, context);
         }
     }
 }

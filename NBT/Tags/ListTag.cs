@@ -33,6 +33,17 @@ namespace TheblueMan003.NBT.Tags
             Subtype = subtype;
         }
 
+        public ListTag(string name, List<Tag> value) : base(name, TagType.List)
+        {
+            Value = value;
+            Subtype = value.Count > 0 ? value[0].Type : TagType.End;
+            // Sanity check
+            if (value.Any(tag => tag.Type != Subtype))
+            {
+                throw new ArgumentException("List contains tags of different types");
+            }
+        }
+
         /// <summary>
         /// Converts the list tag to its SNBT (Stringified NBT) representation.
         /// </summary>
@@ -82,76 +93,16 @@ namespace TheblueMan003.NBT.Tags
             Value.Add(tag);
         }
 
-        /// <summary>
-        /// Adds an integer value to the list.
-        /// </summary>
-        /// <param name="value">The integer value to add.</param>
-        public void Add(int value)
+        public Tag this[int index]
         {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a long value to the list.
-        /// </summary>
-        /// <param name="value">The long value to add.</param>
-        public void Add(long value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a float value to the list.
-        /// </summary>
-        /// <param name="value">The float value to add.</param>
-        public void Add(float value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a double value to the list.
-        /// </summary>
-        /// <param name="value">The double value to add.</param>
-        public void Add(double value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a string value to the list.
-        /// </summary>
-        /// <param name="value">The string value to add.</param>
-        public void Add(string value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a byte array value to the list.
-        /// </summary>
-        /// <param name="value">The byte array value to add.</param>
-        public void Add(byte[] value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds an integer array value to the list.
-        /// </summary>
-        /// <param name="value">The integer array value to add.</param>
-        public void Add(int[] value)
-        {
-            Add(Converter.ToTag(value));
-        }
-
-        /// <summary>
-        /// Adds a long array value to the list.
-        /// </summary>
-        /// <param name="value">The long array value to add.</param>
-        public void Add(long[] value)
-        {
-            Add(Converter.ToTag(value));
+            get
+            {
+                return Value[index];
+            }
+            set
+            {
+                Value[index] = value;
+            }
         }
     }
 }

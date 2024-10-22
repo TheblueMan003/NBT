@@ -1,16 +1,49 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TheblueMan003.NBT.Tags
 {
     /// <summary>
     /// Represents a base class for all NBT tags.
     /// </summary>
-    public abstract class Tag
+    public abstract class Tag : IEnumerable<Tag>
     {
+        public static implicit operator Tag(string key) => new StringTag("", key);
+        public static implicit operator Tag(int key) => new IntTag("", key);
+        public static implicit operator Tag(long key) => new LongTag("", key);
+        public static implicit operator Tag(short key) => new ShortTag("", key);
+        public static implicit operator Tag(byte key) => new ByteTag("", (sbyte)key);
+        public static implicit operator Tag(sbyte key) => new ByteTag("", key);
+        public static implicit operator Tag(float key) => new FloatTag("", key);
+        public static implicit operator Tag(double key) => new DoubleTag("", key);
+        public static implicit operator Tag(bool key) => new ByteTag("", key ? (sbyte)1 : (sbyte)0);
+        public static implicit operator Tag(List<int> key) => new IntArrayTag("", key.ToArray());
+        public static implicit operator Tag(List<long> key) => new LongArrayTag("", key.ToArray());
+        public static implicit operator Tag(List<byte> key) => new ByteArrayTag("", key.ToArray());
+        public static implicit operator Tag(List<string> key) => new ListTag("", key.Select(x => (Tag)x).ToList());
+
+        public static implicit operator long[](Tag key) => ((LongArrayTag)key).Value;
+        public static implicit operator int[](Tag key) => ((IntArrayTag)key).Value;
+        public static implicit operator byte[](Tag key) => ((ByteArrayTag)key).Value;
+        public static implicit operator string(Tag key) => ((StringTag)key).Value;
+        public static implicit operator List<int>(Tag key) => ((IntArrayTag)key).Value.ToList();
+        public static implicit operator List<long>(Tag key) => ((LongArrayTag)key).Value.ToList();
+        public static implicit operator List<byte>(Tag key) => ((ByteArrayTag)key).Value.ToList();
+        public static implicit operator List<string>(Tag key) => ((ListTag)key).Value.Select(x => x.ToString() ?? "").ToList();
+        public static implicit operator int(Tag key) => ((IntTag)key).Value;
+        public static implicit operator long(Tag key) => ((LongTag)key).Value;
+        public static implicit operator short(Tag key) => ((ShortTag)key).Value;
+        public static implicit operator byte(Tag key) => (byte)((ByteTag)key).Value;
+        public static implicit operator sbyte(Tag key) => ((ByteTag)key).Value;
+        public static implicit operator float(Tag key) => ((FloatTag)key).Value;
+        public static implicit operator double(Tag key) => ((DoubleTag)key).Value;
+        public static implicit operator bool(Tag key) => ((ByteTag)key).Value == 1;
+
         /// <summary>
         /// Gets or sets the name of the tag.
         /// </summary>
@@ -91,6 +124,16 @@ namespace TheblueMan003.NBT.Tags
         /// <param name="path">The path to the tag.</param>
         /// <returns>The byte value of the tag at the specified path.</returns>
         public byte GetByte(string path)
+        {
+            return (byte)((ByteTag)GetTag(path)).Value;
+        }
+
+        /// <summary>
+        /// Gets the sbyte value of the tag at the specified path.
+        /// </summary>
+        /// <param name="path">The path to the tag.</param>
+        /// <returns>The byte value of the tag at the specified path.</returns>
+        public sbyte GetSByte(string path)
         {
             return ((ByteTag)GetTag(path)).Value;
         }
@@ -212,6 +255,16 @@ namespace TheblueMan003.NBT.Tags
         /// <param name="value">The new byte value.</param>
         public void SetByte(string path, byte value)
         {
+            ((ByteTag)GetTag(path)).Value = (sbyte)value;
+        }
+
+        /// <summary>
+        /// Sets the byte value of the tag at the specified path.
+        /// </summary>
+        /// <param name="path">The path to the tag.</param>
+        /// <param name="value">The new byte value.</param>
+        public void SetSByte(string path, sbyte value)
+        {
             ((ByteTag)GetTag(path)).Value = value;
         }
 
@@ -242,7 +295,7 @@ namespace TheblueMan003.NBT.Tags
         /// <param name="value">The new boolean value.</param>
         public void SetBool(string path, bool value)
         {
-            ((ByteTag)GetTag(path)).Value = (byte)(value ? 1 : 0);
+            ((ByteTag)GetTag(path)).Value = (sbyte)(value ? 1 : 0);
         }
 
         /// <summary>
@@ -354,6 +407,124 @@ namespace TheblueMan003.NBT.Tags
                         throw new Exception("Path not found");
                     }
             }
+        }
+
+        public bool Contains(string path)
+        {
+            string name = path.Contains(".") ? path.Substring(0, path.IndexOf('.')) : path;
+            string rest = path.Contains(".") ? path.Substring(path.IndexOf('.') + 1) : "";
+            switch (Type)
+            {
+                case TagType.Compound:
+                    var compound = (CompoundTag)this;
+                    if (!compound.Value.ContainsKey(name))
+                    {
+                        return false;
+                    }
+
+                    if (rest == "")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return compound.Value[name].Contains(rest);
+                    }
+
+                case TagType.List:
+                    var list = (ListTag)this;
+                    int index;
+                    if (!int.TryParse(name, out index))
+                    {
+                        return false;
+                    }
+                    if (index < 0 || index >= list.Value.Count)
+                    {
+                        return false;
+                    }
+                    if (rest == "")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return list.Value[index].Contains(rest);
+                    }
+
+                default:
+                    if (rest == "")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+            }
+        }
+
+        public void SetTag(string path, Tag value)
+        {
+            string name = path.Contains(".") ? path.Substring(0, path.LastIndexOf('.')) : path;
+            string rest = path.Contains(".") ? path.Substring(path.LastIndexOf('.') + 1) : "";
+
+            if (rest == "")
+            {
+                switch (Type)
+                {
+                    case TagType.Compound:
+                        ((CompoundTag)this).Value[name] = value;
+                        break;
+
+                    case TagType.List:
+                        int index;
+                        if (!int.TryParse(name, out index))
+                        {
+                            throw new Exception("Path not found");
+                        }
+                        ((ListTag)this).Value[index] = value;
+                        break;
+
+                    default:
+                        throw new Exception("Path not found");
+                }
+            }
+            else
+            {
+                GetTag(name).SetTag(rest, value);
+            }
+        }
+
+        public Tag this[string index]
+        {
+            get
+            {
+                return GetTag(index);
+            }
+            set
+            {
+                SetTag(index, value);
+            }
+        }
+
+        public IEnumerator<Tag> GetEnumerator()
+        {
+            switch (Type)
+            {
+                case TagType.Compound:
+                    return ((CompoundTag)this).Value.Values.GetEnumerator();
+
+                case TagType.List:
+                    return ((ListTag)this).Value.GetEnumerator();
+
+                default:
+                    throw new Exception("Tag is not a compound or list");
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

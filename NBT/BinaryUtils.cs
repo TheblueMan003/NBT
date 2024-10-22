@@ -64,6 +64,60 @@ namespace TheblueMan003.NBT
         }
         #endregion
 
+        #region Int24
+        public static int ReadInt24BigEndian(Stream data)
+        {
+            byte[] buffer = new byte[3];
+            data.Read(buffer, 0, 3);
+            return (buffer[0] << 16) | (buffer[1] << 8) | buffer[2];
+        }
+
+        public static int ReadInt24LittleEndian(Stream data)
+        {
+            byte[] buffer = new byte[3];
+            data.Read(buffer, 0, 4);
+            return buffer[0] | (buffer[1] << 8) | (buffer[2] << 16);
+        }
+
+        public static int ReadInt24(Stream data, BinaryUtilsContext context)
+        {
+            if (context.IsLittleEndian)
+            {
+                return ReadInt24LittleEndian(data);
+            }
+            else
+            {
+                return ReadInt24BigEndian(data);
+            }
+        }
+
+        public static void WriteInt24BigEndian(Stream data, int value)
+        {
+            data.WriteByte((byte)((value >> 16) & 0xFF));
+            data.WriteByte((byte)((value >> 8) & 0xFF));
+            data.WriteByte((byte)(value & 0xFF));
+        }
+
+        public static void WriteInt24LittleEndian(Stream data, int value)
+        {
+            data.WriteByte((byte)(value & 0xFF));
+            data.WriteByte((byte)((value >> 8) & 0xFF));
+            data.WriteByte((byte)((value >> 16) & 0xFF));
+        }
+
+        public static void WriteInt24(Stream data, int value, BinaryUtilsContext context)
+        {
+            if (context.IsLittleEndian)
+            {
+                WriteIntLittleEndian(data, value);
+            }
+            else
+            {
+                WriteIntBigEndian(data, value);
+            }
+        }
+        #endregion
+
         #region Short
         public static short ReadShortBigEndian(Stream data)
         {

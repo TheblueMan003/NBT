@@ -16,5 +16,17 @@ namespace TheblueMan003.NBT
         {
             return Data.ToSNBT();
         }
+
+        public Tag this[string index]
+        {
+            get
+            {
+                return Data.GetTag(index);
+            }
+            set
+            {
+                Data.SetTag(index, value);
+            }
+        }
     }
 }

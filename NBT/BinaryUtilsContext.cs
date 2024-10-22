@@ -20,7 +20,7 @@ namespace TheblueMan003.NBT
         /// <summary>
         /// Gets or sets a value indicating whether the binary data is compressed.
         /// </summary>
-        public bool Compressed;
+        public Compression Compression;
 
         /// <summary>
         /// Gets or sets the size of the header in the binary data.
@@ -43,10 +43,10 @@ namespace TheblueMan003.NBT
         /// <param name="endian">The endianess of the binary data.</param>
         /// <param name="compressed">A value indicating whether the binary data is compressed.</param>
         /// <param name="headerSize">The size of the header in the binary data.</param>
-        public BinaryUtilsContext(Endian endian, bool compressed, int headerSize)
+        public BinaryUtilsContext(Endian endian, Compression compression, int headerSize)
         {
             Endian = endian;
-            Compressed = compressed;
+            Compression = compression;
             HeaderSize = headerSize;
         }
     }

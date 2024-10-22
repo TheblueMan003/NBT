@@ -4,7 +4,7 @@ using TheblueMan003.NBT;
 namespace UnitTest
 {
     [TestClass]
-    public class UnitTest1
+    public class NBTTest
     {
         [TestMethod]
         public void NBTParse()

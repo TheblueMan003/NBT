@@ -74,66 +74,6 @@ namespace TheblueMan003.NBT.Tags
             Value.Add(key, tag);
         }
 
-        public void Add(string key, int value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, string value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, byte value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, short value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, long value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, float value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, double value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, byte[] value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, int[] value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, long[] value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, List<int> value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
-        public void Add(string key, List<long> value)
-        {
-            Add(key, Converter.ToTag(value));
-        }
-
         /// <summary>
         /// Removes the tag with the specified key from the compound tag.
         /// </summary>
@@ -141,6 +81,18 @@ namespace TheblueMan003.NBT.Tags
         public void Remove(string key)
         {
             Value.Remove(key);
+        }
+
+        public Tag this[string index]
+        {
+            get
+            {
+                return Value[index];
+            }
+            set
+            {
+                Value[index] = value;
+            }
         }
     }
 }

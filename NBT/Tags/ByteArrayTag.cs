@@ -11,7 +11,7 @@ namespace TheblueMan003.NBT.Tags
         /// <summary>
         /// Gets or sets the value of the ByteArrayTag.
         /// </summary>
-        public byte[] Value { get; set; }
+        public byte[] Value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ByteArrayTag"/> class with the specified name and value.
